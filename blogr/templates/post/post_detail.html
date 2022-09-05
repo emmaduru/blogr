@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>{{ post.title }}</h2>
+<small class="text-muted">{{ post.created_at }} by {{ post.user.full_name() }} </small>
+<p>{{ post.body }}</p>
+
+<div class="btn-group">
+    <form action="{{ url_for('post.edit_post', post_id=post.id) }}" method="get">
+        <button type="submit" class="btn btn-primary">Edit</button>
+    </form>
+
+    <form action="{{ url_for('post.delete_post', post_id=post.id) }}" method="post">
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+</div>
+
+<hr>
+
+<h3>Comments</h3>
+<form action="{{ url_for('post.create_comment', post_id=post.id) }}" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.body(size=32) }} <br>
+        {% for error in form.body.errors %}
+        <span class="text-danger">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+<hr>
+{% for comment in post.comments %}
+    <div class="card card-body">
+        <p>{{ comment.body }}</p>
+        <small class="text-muted">{{ comment.created_at }} by {{ comment.user.full_name() }} </small>
+        <form action="{{ url_for('post.delete_comment', post_id=post.id, comment_id=comment.id) }}" method="post">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+{% endfor %}
+{% endblock %}
